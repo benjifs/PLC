@@ -26,7 +26,7 @@ Development Environment
 -------------------------
 ### Prerequisites ###
 * Node.js & npm: [Click here](https://nodejs.org/en/) to navigate to the Node.js homepage. Follow instructions to install `Node.js` and `npm`.
-### Intall ###
+### Install ###
 1. Install React
 ```
 $ npm install --save react
@@ -43,6 +43,14 @@ npm install --save @dvsl/zoomcharts
 ```
 npm install --save-dev babel babel-core babel-loader babel-preset-env babel-preset-react 
 
+```
+### Run ###
+
+* Run PLC Locally
+```
+npm start
+```
+
 Docker
 ---
 *The following instructions have only been only been used for quick deploying the application. DO NOT use for active development*
@@ -53,10 +61,3 @@ Docker
 3. Your development environment should now be running on [http://localhost:3001](http://localhost:3001)
 4. To stop the development environment, run `docker-compose stop`.
 
-```
-### Run ###
-
-* Run PLC Locally
-```
-npm start
-```
