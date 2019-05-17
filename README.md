@@ -42,6 +42,17 @@ npm install --save @dvsl/zoomcharts
 4. Install Babel: Install `babel`, `babel-core`, `babel-loader`, `babel-preset-env` and `babel-preset-react` as dev dependencies.
 ```
 npm install --save-dev babel babel-core babel-loader babel-preset-env babel-preset-react 
+
+Docker
+---
+*The following instructions have only been only been used for quick deploying the application. DO NOT use for active development*
+
+1. Install [Docker](https://www.docker.com/products/docker-desktop)
+	* If you have [Homebrew](https://brew.sh/) installed, you can also install docker by running: `brew cask install docker`
+2. Once Docker is installed and running, you can run the current build with: `docker-compose up -d --build`.
+3. Your development environment should now be running on [http://localhost:3001](http://localhost:3001)
+4. To stop the development environment, run `docker-compose stop`.
+
 ```
 ### Run ###
 
