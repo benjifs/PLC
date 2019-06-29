@@ -21,7 +21,16 @@ class AnnotList extends React.Component {
   }
 
   componentDidMount() {
-    const { username } = this.props.location.state;
+    let username;
+    if (this.props.match && this.props.match.params && this.props.match.params.username) {
+      username = this.props.match.params.username;
+    }
+    if (this.props.location && this.props.location.state && this.props.location.state.username) {
+      username = this.props.location.state.username;
+    }
+    if (!username) {
+      return false;
+    }
     this.props.fetchAnnots(username);
 
     console.log("try pass from component:", username);
