@@ -8,6 +8,7 @@ import Login from "./Login";
 import AnnotList from "./AnnotList";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { RandomPage } from "./404Page";
+import D3Page from "./D3Page";
 
 class App extends React.Component {
   state = {
@@ -36,7 +37,9 @@ class App extends React.Component {
               <Login {...props} onNameSubmit={this.LoginHandler} />
             )}
           />
+          <Route path="/user/:username" exact component={AnnotList} />
           <ProtectedRoute path="/dashboard" component={AnnotList} />
+          <Route path="/d3" exact component={D3Page} />
           <Route path="*" component={RandomPage} />
         </Switch>
         {/* <Footer /> */}
