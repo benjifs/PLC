@@ -9,7 +9,7 @@ class D3Page extends React.Component {
 		super(props);
 
 		this.state = {
-			topic: "technology",
+			topic: "cyberpunk",
 			max: 50
 		}
 	}
@@ -48,7 +48,7 @@ const groupBy = (arr, key) => {
 	return Object.keys(obj).map((key) => {
 		return {
 			"name": formatName(key),
-			"children": obj[key]
+			"_children": obj[key]
 		}
 	});
 }

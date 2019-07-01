@@ -13,8 +13,8 @@ export default class extends React.Component {
 	componentDidMount() {
 		const root = d3.hierarchy(this.props.data);
 
-		const links = root.links();
-		const nodes = root.descendants();
+		let links = root.links();
+		let nodes = root.descendants();
 
 		const simulation = d3.forceSimulation(nodes)
 			.force("link", d3.forceLink(links).id(d => d.id).distance(42).strength(1))
@@ -36,45 +36,73 @@ export default class extends React.Component {
 			.attr("class", "container");
 
 		let update = () => {
-			let link = container.append("g")
-				.attr("stroke", "#999")
-				.attr("stroke-opacity", 0.6)
-				.selectAll("line")
-				.data(links)
-				.join("line");
+			links = root.links();
+			nodes = root.descendants();
 
-			let node = container.selectAll("g.node")
+			let link = container.selectAll("line")
+				.data(links);
+
+			link
+				.exit()
+				.remove();
+
+			let linkEnter = link
+				.enter()
+				.append("line")
+				.attr("class", "link")
+				.attr("stroke", "#999")
+				.attr("stroke-opacity", 0.6);
+
+			link = linkEnter.merge(link);
+
+			let node = container.selectAll(".node")
 				.data(nodes);
+
+			// node.exit().remove();
+
+			node
+				.exit()
+				.remove();
 
 			let nodeEnter = node.enter()
 				.append("g")
 				.attr("id", d => "node_" + (d.data.name || Math.floor(Math.random() * 1000)))
-				.attr("class", "node");
+				.attr("class", "node")
+				.style("cursor", "pointer")
+				.on("mouseover", this.mouseover)
+				.on("mouseout", this.mouseout)
+				.on("click", (d) => {
+					if (!d3.event.defaultPrevented) {
+						if (d.children) {
+							d._children = d.children;
+							d.children = null;
+						} else {
+							d.children = d._children;
+							d._children = null;
+						}
+						update();
+					}
+				});
 
 			nodeEnter
 				.append("circle")
 				.attr("id", d => (d.leafUid = "leaf_" + Math.random().toString(36).substr(2, 9)))
 				.attr("class", "node_circle")
-				.attr("fill", d => d.data.root ? "#ed798d" : d.children ? "#99e6c8" : "#65BCF8")
+				.attr("fill", (d) => {
+					console.log(d);
+
+					if (d.data.root) {
+						return "#ed798d";
+					} else if (d.children) {
+						return "#99e6c8";
+					} else {
+						return "#65bcf8";
+					}
+				})
 				.attr("stroke", "rgba(0,0,0,.5)")
 				.attr("stroke-width", 1.5)
 				.attr("r", d => (d.r = d.children ? 20 : 10))
-				.style("cursor", "pointer")
 				.call(this.drag(simulation))
-				.on("mouseover", this.mouseover)
-				.on("mouseout", this.mouseout)
-				.on("click", (d) => {
-					// if (!d3.event.defaultPrevented) {
-					// 	if (d.children) {
-					// 		d._children = d.children;
-					// 		d.children = null;
-					// 	} else {
-					// 		d.children = d._children;
-					// 		d._children = null;
-					// 	}
-					// 	update();
-					// }
-				});
 
 			nodeEnter
 				.append("clipPath")
@@ -94,6 +122,8 @@ export default class extends React.Component {
 				.attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
 				.text(d => d);
 
+			node = nodeEnter.merge(node);
+
 			simulation
 				.on("tick", () => {
 					link
@@ -111,14 +141,14 @@ export default class extends React.Component {
 	}
 
 	mouseover(d, i) {
-		d3.select(this)
+		d3.select(this).select("circle")
 			.transition()
 			.attr("r", d.r + 2)
 			.attr("stroke", "#000");
 	}
 
 	mouseout(d, i) {
-		d3.select(this)
+		d3.select(this).select("circle")
 			.transition()
 			.attr("r", d.r)
 			.attr("stroke", "rgba(0,0,0,.5)");
