@@ -8,8 +8,13 @@ class D3Page extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let topic = "IndieWeb";
+		if (this.props.match && this.props.match.params && this.props.match.params.topic) {
+			topic = this.props.match.params.topic;
+		}
+
 		this.state = {
-			topic: "cyberpunk",
+			topic: topic,
 			max: 50
 		}
 	}
@@ -26,7 +31,7 @@ class D3Page extends React.Component {
 					{this.props.data && this.props.data.length &&
 						<D3v5
 							data={{
-								"root": true,
+								"type": "root",
 								"name": this.state.topic,
 								"children": this.props.data
 							}}
@@ -36,6 +41,21 @@ class D3Page extends React.Component {
 			</div>
 		);
 	}
+}
+
+const extractLink = (arr) => {
+	return arr.map((item, i) => {
+		if (item.target && item.target.length == 1) {
+			item.children = [
+				{
+					"name": "www",
+					"type": "link",
+					"href": item.target[0].source
+				}
+			]
+		}
+		return item;
+	});
 }
 
 const groupBy = (arr, key) => {
@@ -48,7 +68,8 @@ const groupBy = (arr, key) => {
 	return Object.keys(obj).map((key) => {
 		return {
 			"name": formatName(key),
-			"_children": obj[key]
+			"type": "user",
+			"children": obj[key]
 		}
 	});
 }
@@ -62,7 +83,7 @@ const formatName = (name) => {
 
 const mapStateToProps = (state) => {
 	if (state.searchedAnnots) {
-		state.searchedAnnots = groupBy(state.searchedAnnots, "user");
+		state.searchedAnnots = groupBy(extractLink(state.searchedAnnots), "user");
 		return {
 			data: state.searchedAnnots
 		}

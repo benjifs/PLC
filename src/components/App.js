@@ -40,6 +40,7 @@ class App extends React.Component {
           <Route path="/user/:username" exact component={AnnotList} />
           <ProtectedRoute path="/dashboard" component={AnnotList} />
           <Route path="/d3" exact component={D3Page} />
+          <Route path="/d3/:topic" exact component={D3Page} />
           <Route path="*" component={RandomPage} />
         </Switch>
         {/* <Footer /> */}
