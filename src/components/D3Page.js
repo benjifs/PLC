@@ -9,7 +9,7 @@ class D3Page extends React.Component {
 		super(props);
 
 		this.state = {
-			topic: "cyberpunk",
+			topic: "technology",
 			max: 50
 		}
 	}
