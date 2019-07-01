@@ -9,7 +9,7 @@ class D3Page extends React.Component {
 		super(props);
 
 		this.state = {
-			topic: "technology",
+			topic: "cyberpunk",
 			max: 50
 		}
 	}
@@ -26,6 +26,7 @@ class D3Page extends React.Component {
 					{this.props.data && this.props.data.length &&
 						<D3v5
 							data={{
+								"root": true,
 								"name": this.state.topic,
 								"children": this.props.data
 							}}
@@ -46,10 +47,17 @@ const groupBy = (arr, key) => {
 
 	return Object.keys(obj).map((key) => {
 		return {
-			"name": key,
+			"name": formatName(key),
 			"children": obj[key]
 		}
 	});
+}
+
+const formatName = (name) => {
+	if (/acct:[a-zA-Z0-9_.]+@[a-zA-Z0-9.]+/.test(name)) {
+		return name.substring(name.indexOf(":") + 1, name.indexOf("@"));
+	}
+	return name;
 }
 
 const mapStateToProps = (state) => {
