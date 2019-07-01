@@ -16,25 +16,12 @@ export default class extends React.Component {
 		const links = root.links();
 		const nodes = root.descendants();
 
-		let link, node, nodeEnter;
-
 		const simulation = d3.forceSimulation(nodes)
 			.force("link", d3.forceLink(links).id(d => d.id).distance(42).strength(1))
 			.force("charge", d3.forceManyBody().strength(-500))
 			.force("collide", d3.forceCollide().radius(d => 5))
 			.force("x", d3.forceX())
-			.force("y", d3.forceY())
-			.on("tick", () => {
-				link
-					.attr("x1", d => d.source.x)
-					.attr("y1", d => d.source.y)
-					.attr("x2", d => d.target.x)
-					.attr("y2", d => d.target.y);
-
-				nodeEnter
-					.attr("transform", d => "translate(" + d.x + "," + d.y + ")");
-			});
-
+			.force("y", d3.forceY());
 
 		const zoom = d3.zoom()
 			.on("zoom", () => {
@@ -49,17 +36,17 @@ export default class extends React.Component {
 			.attr("class", "container");
 
 		let update = () => {
-			link = container.append("g")
+			let link = container.append("g")
 				.attr("stroke", "#999")
 				.attr("stroke-opacity", 0.6)
 				.selectAll("line")
 				.data(links)
 				.join("line");
 
-			node = container.selectAll("g.node")
+			let node = container.selectAll("g.node")
 				.data(nodes);
 
-			nodeEnter = node.enter()
+			let nodeEnter = node.enter()
 				.append("g")
 				.attr("id", d => "node_" + (d.data.name || Math.floor(Math.random() * 1000)))
 				.attr("class", "node");
@@ -106,6 +93,18 @@ export default class extends React.Component {
 				.attr("x", 0)
 				.attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
 				.text(d => d);
+
+			simulation
+				.on("tick", () => {
+					link
+						.attr("x1", d => d.source.x)
+						.attr("y1", d => d.source.y)
+						.attr("x2", d => d.target.x)
+						.attr("y2", d => d.target.y);
+
+					nodeEnter
+						.attr("transform", d => "translate(" + d.x + "," + d.y + ")");
+				});
 		}
 
 		update();
