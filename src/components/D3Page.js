@@ -25,19 +25,16 @@ class D3Page extends React.Component {
 
 	render() {
 		return (
-			<div className="ui container">
-				<div className="root-text">
-					<h3 className="content-container content">Made it!</h3>
-					{this.props.data && this.props.data.length > 0 &&
-						<D3v5
-							data={{
-								"type": "root",
-								"name": this.state.topic,
-								"children": this.props.data
-							}}
-						/>
-					}
-				</div>
+			<div>
+				{this.props.data && this.props.data.length > 0 &&
+					<D3v5
+						data={{
+							"type": "root",
+							"name": this.state.topic,
+							"children": this.props.data
+						}}
+					/>
+				}
 			</div>
 		);
 	}
