@@ -3,15 +3,18 @@ import React from "react";
 import * as d3 from "d3";
 
 export default class extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.height = 400;
-		this.width = 600;
-	}
-
 	componentDidMount() {
+		let id = 0;
+		const height = 400;
+		const width = 600;
 		const root = d3.hierarchy(this.props.data);
+
+		// Close all nodes other than root
+		// root.children.map((item, i) => {
+		// 	item._children = item.children;
+		// 	item.children = null
+		// 	return item;
+		// });
 
 		let links = root.links();
 		let nodes = root.descendants();
@@ -29,7 +32,7 @@ export default class extends React.Component {
 			});
 
 		const svg = d3.select(this.refs.canvas).append("svg")
-			.attr("viewBox", [-this.width / 2, -this.height / 2, this.width, this.height])
+			.attr("viewBox", [-width / 2, -height / 2, width, height])
 			.call(zoom);
 
 		const container = svg.append("g")
@@ -40,7 +43,7 @@ export default class extends React.Component {
 			nodes = root.descendants();
 
 			let link = container.selectAll("line")
-				.data(links);
+				.data(links, d => id++);
 
 			link
 				.exit()
@@ -56,9 +59,7 @@ export default class extends React.Component {
 			link = linkEnter.merge(link);
 
 			let node = container.selectAll(".node")
-				.data(nodes);
-
-			// node.exit().remove();
+				.data(nodes, d => id++);
 
 			node
 				.exit()
@@ -73,6 +74,9 @@ export default class extends React.Component {
 				.on("mouseout", this.mouseout)
 				.on("click", (d) => {
 					if (!d3.event.defaultPrevented) {
+						if (d.data.type == "link") {
+							return window.open(d.data.href, "_blank");
+						}
 						if (d.children) {
 							d._children = d.children;
 							d.children = null;
@@ -88,20 +92,10 @@ export default class extends React.Component {
 				.append("circle")
 				.attr("id", d => (d.leafUid = "leaf_" + Math.random().toString(36).substr(2, 9)))
 				.attr("class", "node_circle")
-				.attr("fill", (d) => {
-					console.log(d);
-
-					if (d.data.root) {
-						return "#ed798d";
-					} else if (d.children) {
-						return "#99e6c8";
-					} else {
-						return "#65bcf8";
-					}
-				})
+				.attr("fill", this.color)
 				.attr("stroke", "rgba(0,0,0,.5)")
 				.attr("stroke-width", 1.5)
-				.attr("r", d => (d.r = d.children ? 20 : 10))
+				.attr("r", d => (d.r = d.children || d._children ? 20 : 15))
 				.call(this.drag(simulation))
 
 			nodeEnter
@@ -138,6 +132,20 @@ export default class extends React.Component {
 		}
 
 		update();
+	}
+
+	color(d) {
+		if (d.data.type == "root") {
+			return d.children ? "#f3a6b3" : "#ed798d";
+		} else if (d.data.type == "user") {
+			return d.children ? "#b1ddfa" : "#69BDF6";
+		} else if (d.children) {
+			return "#99e6c8";
+		} else if (d._children) {
+			return "#5cd7a7";
+		} else {
+			return "#FED776";
+		}
 	}
 
 	mouseover(d, i) {
