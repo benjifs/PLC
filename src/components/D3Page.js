@@ -42,7 +42,7 @@ class D3Page extends React.Component {
 
 const extractLink = (arr) => {
 	return arr.map((item, i) => {
-		if (item.target && item.target.length == 1) {
+		if (item.target && item.target.length === 1) {
 			item.children = [
 				{
 					"name": "www",
