@@ -30,7 +30,7 @@ class D3Page extends React.Component {
 					<D3v5
 						data={{
 							"type": "root",
-							"name": this.state.topic,
+							"text": this.state.topic,
 							"children": this.props.data
 						}}
 					/>
@@ -42,10 +42,11 @@ class D3Page extends React.Component {
 
 const extractLink = (arr) => {
 	return arr.map((item, i) => {
+		item.tooltip = item.text;
 		if (item.target && item.target.length === 1) {
 			item.children = [
 				{
-					"name": "www",
+					"text": "www",
 					"type": "link",
 					"href": item.target[0].source
 				}
@@ -64,7 +65,7 @@ const groupBy = (arr, key) => {
 
 	return Object.keys(obj).map((key) => {
 		return {
-			"name": formatName(key),
+			"text": formatName(key),
 			"type": "user",
 			"children": obj[key]
 		}
