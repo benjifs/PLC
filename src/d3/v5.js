@@ -6,6 +6,24 @@ import "./v5.css";
 
 export default class extends React.Component {
 	componentDidMount() {
+		this.renderD3();
+	}
+
+	shouldComponentUpdate(nextProps) {
+		// Prevents multiple renders
+		if (nextProps.query == this.props.query) {
+			return false;
+		}
+		return true;
+	}
+
+	componentDidUpdate() {
+		this.renderD3();
+	}
+
+	renderD3() {
+		d3.select(this.refs.canvas).select("svg").remove();
+
 		let id = 0;
 		const height = 400;
 		const width = 600;
