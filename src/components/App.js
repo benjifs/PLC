@@ -1,6 +1,6 @@
 import "../css/App.css";
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Header from "./Header";
 // import Footer from "./Footer";
 import RootPage from "./RootPage";
@@ -40,7 +40,8 @@ class App extends React.Component {
           <Route path="/user/:username" exact component={AnnotList} />
           <ProtectedRoute path="/dashboard" component={AnnotList} />
           <Route path="/d3" exact component={D3Page} />
-          <Route path="/d3/:topic" exact component={D3Page} />
+          <Route path="/d3/user/:user" exact component={D3Page} />
+          <Route path="/d3/topic/:topic" exact component={D3Page} />
           <Route path="*" component={RandomPage} />
         </Switch>
         {/* <Footer /> */}

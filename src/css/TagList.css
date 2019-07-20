@@ -1,0 +1,32 @@
+.tag-list {
+  background: #eef1f8 !important;
+  padding: 0.6em 1em !important;
+}
+p.tag-item {
+  margin-right: 0.4em !important;
+  margin-top: 0.3em !important;
+  background: #a5abb6 !important;
+  padding: 0.5em 0.8em !important;
+  border-radius: 0.1em !important;
+  transition: all linear 400ms !important;
+  cursor: pointer !important;
+}
+
+p.tag-item:hover,
+p.tag-item:focus {
+  background: #702632 !important;
+}
+.ui.horizontal.list:not(.celled) > .item:first-child {
+  padding-left: 0.8em !important;
+}
+
+.list-container {
+  height: 4.3em !important;
+  overflow: hidden !important;
+  overflow-y: scroll !important;
+}
+
+.ui.horizontal.list p {
+  color: #fff !important;
+  font-size: 11px !important;
+}

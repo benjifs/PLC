@@ -1,41 +1,76 @@
 import React from "react";
 import { connect } from "react-redux";
 
+import SearchedAnnotList from "./SearchAnnots";
+import TagList from "./TagList";
+
 import D3v5 from "../d3/v5";
-import { fetchSearchedAnnots } from "../actions";
+import { fetchAnnots, fetchSearchedAnnots } from "../actions";
 
 class D3Page extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let user;
 		let topic = "IndieWeb";
-		if (this.props.match && this.props.match.params && this.props.match.params.topic) {
-			topic = this.props.match.params.topic;
+		if (this.props.match && this.props.match.params) {
+			if (this.props.match.params.topic) {
+				user = null;
+				topic = this.props.match.params.topic;
+			} else if (this.props.match.params.user) {
+				user = this.props.match.params.user;
+				topic = null;
+			}
 		}
 
 		this.state = {
 			topic: topic,
+			user: user,
 			max: 50
 		}
+
+		this.onSearchSubmit = this.onSearchSubmit.bind(this);
 	}
 
 	componentDidMount() {
-		this.props.fetchSearchedAnnots(this.state.topic, this.state.max);
+		if (this.state.topic) {
+			this.props.fetchSearchedAnnots(this.state.topic, this.state.max);
+		} else if (this.state.user) {
+			this.props.fetchAnnots(this.state.user, this.state.max);
+		}
+	}
+
+	onSearchSubmit(term) {
+		this.props.fetchSearchedAnnots(term, this.state.max);
+		this.setState({
+			topic: term
+		});
 	}
 
 	render() {
+		let data;
+		if (this.props.data && this.state.topic) {
+			data = {
+				"type": "root",
+				"text": this.state.topic,
+				"children": this.props.data
+			}
+		}
 		return (
-			<div>
-				{this.props.data && this.props.data.length > 0 &&
+			<div className="dashboard">
+				<div className="dashboard-container">
+					<SearchedAnnotList
+						onSubmit={this.onSearchSubmit} />
+					<TagList
+						tags={this.props.tags}
+						onSubmit={this.onSearchSubmit} />
+				</div>
+				{data &&
 					<D3v5
-						data={{
-							"type": "root",
-							"text": this.state.topic,
-							"children": this.props.data
-						}}
+						data={data}
 					/>
 				}
-			</div>
+			</div >
 		);
 	}
 }
@@ -58,8 +93,16 @@ const extractLink = (arr) => {
 
 const groupBy = (arr, key) => {
 	let obj = arr.reduce((data, item) => {
-		data[item[key]] = data[item[key]] || [];
-		data[item[key]].push(item);
+		if (Array.isArray(item[key])) {
+			let keys = item[key];
+			for (let i in keys) {
+				data[keys[i]] = data[keys[i]] || [];
+				data[keys[i]].push(item);
+			}
+		} else {
+			data[item[key]] = data[item[key]] || [];
+			data[item[key]].push(item);
+		}
 		return data;
 	}, {});
 
@@ -67,7 +110,8 @@ const groupBy = (arr, key) => {
 		return {
 			"text": formatName(key),
 			"type": "user",
-			"children": obj[key]
+			"children": obj[key],
+			"count": obj[key].length
 		}
 	});
 }
@@ -80,15 +124,21 @@ const formatName = (name) => {
 }
 
 const mapStateToProps = (state) => {
-	if (state.searchedAnnots) {
+	if (state.searchedAnnots && state.searchedAnnots.length > 0) {
 		state.searchedAnnots = groupBy(extractLink(state.searchedAnnots), "user");
 		return {
 			data: state.searchedAnnots
 		}
 	}
-	return null;
+	if (state.annots && state.annots.length > 0) {
+		state.annots = groupBy(extractLink(state.annots), "tags");
+		return {
+			tags: state.annots
+		}
+	}
+	return {};
 }
 
 export default connect(mapStateToProps,
-	{ fetchSearchedAnnots }
+	{ fetchAnnots, fetchSearchedAnnots }
 )(D3Page);

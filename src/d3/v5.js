@@ -191,7 +191,7 @@ export default class extends React.Component {
 				})
 				.selectAll("tspan")
 				.data(function (d) {
-					let data = d.data && d.data.text ? d.data.text : null;
+					let data = d.data && d.data.text ? d.data.text : "";
 					if (data) {
 						data = data.split(" ");
 						if (data.length > 5) {
