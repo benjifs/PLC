@@ -7,6 +7,8 @@ import TagList from "./TagList";
 import D3v5 from "../d3/v5";
 import { fetchAnnots, fetchSearchedAnnots } from "../actions";
 
+import "../css/D3Page.css";
+
 class D3Page extends React.Component {
 	constructor(props) {
 		super(props);
@@ -40,34 +42,33 @@ class D3Page extends React.Component {
 		}
 	}
 
-	onSearchSubmit(term) {
-		this.props.fetchSearchedAnnots(term, this.state.max);
-		this.setState({
-			topic: term
-		});
+	onSearchSubmit(topic) {
+		if (topic == this.state.topic) {
+			return;
+		}
+		this.props.fetchSearchedAnnots(topic, this.state.max);
+		this.setState({ topic: topic });
 	}
 
 	render() {
-		let data;
-		if (this.props.data && this.state.topic) {
-			data = {
-				"type": "root",
-				"text": this.state.topic,
-				"children": this.props.data
-			}
-		}
 		return (
-			<div className="dashboard">
-				<div className="dashboard-container">
+			<div className="d3-dashboard">
+				<div className="d3-dashboard-container">
 					<SearchedAnnotList
 						onSubmit={this.onSearchSubmit} />
 					<TagList
-						tags={this.props.tags}
+						selected={this.state.topic}
+						tags={this.props.tags || this.state.tags}
 						onSubmit={this.onSearchSubmit} />
 				</div>
-				{data &&
+				{this.props.data && this.state.topic &&
 					<D3v5
-						data={data}
+						query={this.state.topic}
+						data={{
+							"type": "root",
+							"text": this.state.topic,
+							"children": this.props.data
+						}}
 					/>
 				}
 			</div >
@@ -124,19 +125,14 @@ const formatName = (name) => {
 }
 
 const mapStateToProps = (state) => {
+	let props = {};
 	if (state.searchedAnnots && state.searchedAnnots.length > 0) {
-		state.searchedAnnots = groupBy(extractLink(state.searchedAnnots), "user");
-		return {
-			data: state.searchedAnnots
-		}
+		props.data = groupBy(extractLink(state.searchedAnnots), "user");
 	}
 	if (state.annots && state.annots.length > 0) {
-		state.annots = groupBy(extractLink(state.annots), "tags");
-		return {
-			tags: state.annots
-		}
+		props.tags = groupBy(extractLink(state.annots), "tags");
 	}
-	return {};
+	return props;
 }
 
 export default connect(mapStateToProps,
