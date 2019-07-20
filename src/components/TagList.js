@@ -4,10 +4,6 @@ import React from "react";
 import "../css/TagList.css";
 
 export default class extends React.Component {
-	onClickTag(text) {
-		this.props.onSubmit && this.props.onSubmit(text);
-	}
-
 	render() {
 		if (typeof this.props.tags === "undefined") {
 			return null;
@@ -23,8 +19,14 @@ export default class extends React.Component {
 							return (
 								<div className="ui horizontal list" key={i}>
 									<p
-										className="item tag-item"
-										onClick={() => this.onClickTag(tag.text)}>{tag.text} &nbsp; {tag.count}</p>
+										className={
+											"item tag-item" +
+											(this.props.selected == tag.text ? " selected" : "")
+										}
+										onClick={() => {
+											this.props.onSubmit && this.props.onSubmit(tag.text);
+										}}
+									>{tag.text} &nbsp; {tag.count}</p>
 								</div>
 							);
 						})
