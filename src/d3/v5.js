@@ -64,6 +64,7 @@ export default class extends React.Component {
 		const svg = d3.select(this.refs.canvas).append("svg")
 			.attr("viewBox", [-width / 2, -height / 2, width, height])
 			.attr("height", "100%")
+			.attr("width", "100%")
 			.call(zoom);
 
 		const container = svg.append("g")
